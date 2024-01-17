@@ -3,7 +3,7 @@
 *.pot
 *.pyc
 __pycache__
-db.sqlite3
+#db.sqlite3 --> include sqllite db for this repo since codio environment refreshes per chapter
 media
 
 # Backup files # 
