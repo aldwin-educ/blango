@@ -29,7 +29,7 @@ def author_details_tag(context):
 
   return format_html('{}{}{}', prefix, name, suffix)
 
-@register.inclusion_tag('blog/post-list.html')
+@register.inclusion_tag('blog/post_list.html')
 def recent_posts(post,title='Recent Posts'):
     posts=Post.objects.exclude(pk=post.id).order_by('-published_at')[0:5]
     return {'posts':posts, 'title':title}
