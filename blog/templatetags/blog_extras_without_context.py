@@ -1,16 +1,32 @@
 from django import template
 from django.contrib.auth.models import User
-from blog.models import Post
+#from django.utils.html import escape
+#from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 
 register = template.Library()
 
-@register.simple_tag(takes_context=True)
-def author_details_tag(context):
-  request = context["request"]
-  current_user = request.user
-  post = context["post"]
-  author = post.author
+@register.filter
+def author_details(author, current_user=None):
+  if not isinstance(author, User):
+      # return empty string as safe default
+      return ""
+  '''
+  if author.first_name and author.last_name:
+      name = escape(f"{author.first_name} {author.last_name}")
+  else:
+      name = escape(f"{author.username}")
+
+  if author.email:
+      email = escape(author.email)
+      prefix = f'<a href="mailto:{email}">'
+      suffix = "</a>"
+  else:
+      prefix = ""
+      suffix = ""
+
+  return mark_safe(f"{prefix}{name}{suffix}")
+  '''
 
   if author == current_user:
     return format_html("<strong>me</strong>")
@@ -28,11 +44,6 @@ def author_details_tag(context):
       suffix = ""
 
   return format_html('{}{}{}', prefix, name, suffix)
-
-@register.inclusion_tag('blog/post-list.html')
-def recent_posts(post,title='Recent Posts'):
-    posts=Post.objects.exclude(pk=post.id).order_by('-published_at')[0:5]
-    return {'posts':posts, 'title':title}
 
 @register.simple_tag
 def row(extra_classes=""):
