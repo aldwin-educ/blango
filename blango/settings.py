@@ -123,6 +123,18 @@ class Dev(Configuration):
         },
     ]
 
+    # Add this to override default PASSWORD_HASHERS given at https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-PASSWORD_HASHERS
+    # Make Argon2 Default hasher
+    # Install pip3 install setuptools && pip3 install django[argon2]
+    
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.Argon2PasswordHasher',
+        'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+        'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+        'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    ]
+
+
 
     # Internationalization
     # https://docs.djangoproject.com/en/3.2/topics/i18n/
