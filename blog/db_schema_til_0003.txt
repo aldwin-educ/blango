@@ -1,0 +1,74 @@
+CREATE TABLE "blog_post" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
+  "created_at" datetime NOT NULL, 
+  "modified_at" datetime NOT NULL, 
+  "published_at" datetime NULL, 
+  "title" text NOT NULL, 
+  "slug" varchar(50) NOT NULL, 
+  "summary" text NOT NULL, 
+  "content" text NOT NULL, 
+  "author_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE "blog_post_tags" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
+  "post_id" bigint NOT NULL REFERENCES "blog_post" ("id") DEFERRABLE INITIALLY DEFERRED, 
+  "tag_id" bigint NOT NULL REFERENCES "blog_tag" ("id") DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX "blog_post_slug_b95473f2" ON "blog_post" ("slug");
+CREATE INDEX "blog_post_author_id_dd7a8485" ON "blog_post" ("author_id");
+CREATE UNIQUE INDEX "blog_post_tags_post_id_tag_id_4925ec37_uniq" ON "blog_post_tags" ("post_id", "tag_id");
+CREATE INDEX "blog_post_tags_post_id_a1c71c8a" ON "blog_post_tags" ("post_id");
+CREATE INDEX "blog_post_tags_tag_id_0875c551" ON "blog_post_tags" ("tag_id");
+COMMIT;
+
+CREATE TABLE "blog_comment" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
+  "content" text NOT NULL, 
+  "object_id" integer unsigned NOT NULL CHECK ("object_id" >= 0), 
+  "created_at" datetime NOT NULL, 
+  "modified_at" datetime NOT NULL, 
+  "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, 
+  "creator_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX "blog_comment_content_type_id_e26f0063" ON "blog_comment" ("content_type_id");
+CREATE INDEX "blog_comment_creator_id_8f9779c2" ON "blog_comment" ("creator_id");
+COMMIT;
+
+
+CREATE TABLE "new__blog_post" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
+  "published_at" datetime NULL, 
+  "created_at" datetime NOT NULL, 
+  "modified_at" datetime NOT NULL, 
+  "title" text NOT NULL, 
+  "slug" varchar(50) NOT NULL, 
+  "summary" text NOT NULL, 
+  "content" text NOT NULL, 
+  "author_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED
+);
+INSERT INTO "new__blog_post" (
+  "id", "created_at", "modified_at", 
+  "title", "slug", "summary", "content", 
+  "author_id", "published_at"
+) 
+SELECT 
+  "id", 
+  "created_at", 
+  "modified_at", 
+  "title", 
+  "slug", 
+  "summary", 
+  "content", 
+  "author_id", 
+  "published_at" 
+FROM 
+  "blog_post";
+DROP 
+  TABLE "blog_post";
+ALTER TABLE 
+  "new__blog_post" RENAME TO "blog_post";
+CREATE INDEX "blog_post_published_at_9524a659" ON "blog_post" ("published_at");
+CREATE INDEX "blog_post_slug_b95473f2" ON "blog_post" ("slug");
+CREATE INDEX "blog_post_author_id_dd7a8485" ON "blog_post" ("author_id");
+COMMIT;

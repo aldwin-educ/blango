@@ -13,13 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+# If time is available consider conditional imports
+import debug_toolbar
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
 import blog.views
 
 urlpatterns = [
   path('admin/', admin.site.urls),
   path("", blog.views.index,name="blog-post-list"),
   path("post/<slug>/", blog.views.post_detail,name="blog-post-detail"),
+
+  # test to get the IP to be used by Django Debug Toolbar
+  path("ip/", blog.views.get_ip)
 ]
 
+if settings.DEBUG:
+  urlpatterns += [
+      path("__debug__/", include(debug_toolbar.urls)),
+  ]

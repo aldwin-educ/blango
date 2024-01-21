@@ -17,7 +17,12 @@ def index(request):
     #logger.debug("Index function is called!") # you should only see this the first time since subsequent functiokn call is not performed.  Or wait 5 mins
     #return HttpResponse(str(request.user).encode("ascii"))
 
-    posts = Post.objects.filter(published_at__lte=timezone.now())
+    posts = (Post.objects
+            .filter(published_at__lte=timezone.now())
+            .select_related('author')
+            .order_by('-published_at')
+            .defer('title',"created_at", "modified_at"))
+
     logger.debug("Got %d posts", len(posts))
     
     return render(request, "blog/index.html", {"posts": posts})
@@ -47,3 +52,8 @@ def post_detail(request, slug):
     return render(
         request, "blog/post_detail_with_form.html", {"post": post, "comment_form": comment_form}
     )    
+
+ # test to get the IP to be used by Django Debug Toolbar
+def get_ip(request):
+  from django.http import HttpResponse
+  return HttpResponse(request.META['REMOTE_ADDR'])   
