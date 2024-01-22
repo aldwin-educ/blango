@@ -57,6 +57,8 @@ class Dev(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        # custom user
+        'blango_auth',
         'blog',
         'crispy_forms',
         'crispy_bootstrap5',
@@ -136,6 +138,10 @@ class Dev(Configuration):
         'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     ]
 
+    # We use a new User model
+    AUTH_USER_MODEL='blango_auth.User'
+
+
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -203,7 +209,7 @@ class Dev(Configuration):
     CRISPY_TEMPLATE_PACK='bootstrap5'
 
     # used by Django debug toolbar
-    INTERNAL_IPS = ["192.168.11.179"]
+    INTERNAL_IPS = ["192.168.10.93"]
 
 class Prod(Dev):
     DEBUG = False
