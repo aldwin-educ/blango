@@ -211,6 +211,12 @@ class Dev(Configuration):
     # used by Django debug toolbar
     INTERNAL_IPS = ["192.168.10.93"]
 
+    # Writes to console instead of sending out email
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+    # django-registration setting
+    ACCOUNT_ACTIVATION_DAYS = 7
+
 class Prod(Dev):
     DEBUG = False
     SECRET_KEY = values.SecretValue()
